@@ -38,36 +38,39 @@ public class NotesFragment extends Fragment {
     }
 
     private void insertNotes(LinearLayout view) {
-        /*Bundle args = getArguments();
+        Bundle args = getArguments();
         if (args != null) {
-            ArrayList<Notes> notesArrayList = getArguments().getParcelableArrayList(Notes.NOTE_KEY);*/
-        ArrayList<Notes> notesArrayList = MainActivity.notesArrayList;
+            ArrayList<Notes> notesArrayList = getArguments().getParcelableArrayList(Notes.NOTE_KEY);
 
-        for (int i = 0; i < notesArrayList.size(); i++) {
-            TextView textView = new TextView(getContext());
-            textView.setTextSize(30);
-            textView.setText(notesArrayList.get(i).getNote());
-            view.addView(textView);
-            int finalI = i;
-            textView.setOnClickListener(v -> {
-                Notes.thisNote = finalI;
-                setNoteDisc();
-            });
+            for (int i = 0; i < notesArrayList.size(); i++) {
+                TextView textView = new TextView(getContext());
+                textView.setTextSize(30);
+                textView.setText(notesArrayList.get(i).getNote());
+                view.addView(textView);
+                int finalI = i;
+                textView.setOnClickListener(v -> {
+                    setNoteDisc(notesArrayList.get(finalI));
+                });
+            }
         }
     }
 
-    private void setNoteDisc() {
+    private void setNoteDisc(Notes notes) {
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        Bundle bundle = new Bundle();
+        NotesDescriptionFragment fragment = new NotesDescriptionFragment();
+        bundle.putParcelable(Notes.NOTE_KEY, notes);
+        fragment.setArguments(bundle);
+
         if (!MainActivity.isLandscape) {
-            FragmentManager fragmentManager = getParentFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_container, new NotesDescriptionFragment());
+            fragmentTransaction.replace(R.id.frame_container, fragment);
             fragmentTransaction.addToBackStack(null);
-            fragmentTransaction.commit();
         } else {
-            FragmentManager fragmentManager = getParentFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.frame_container_land, new NotesDescriptionFragment());
-            fragmentTransaction.commit();
+            fragmentTransaction.replace(R.id.frame_container_land, fragment);
         }
+
+        fragmentTransaction.commit();
     }
 }

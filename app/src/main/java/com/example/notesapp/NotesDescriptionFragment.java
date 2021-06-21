@@ -37,11 +37,13 @@ public class NotesDescriptionFragment extends Fragment {
     }
 
     private void insertNotes(LinearLayout view) {
-        notesArrayList = MainActivity.notesArrayList;
-        if (Notes.thisNote != -1) {
-            addNewTextView(notesArrayList.get(Notes.thisNote).getNote(), view);
-            addNewTextView(notesArrayList.get(Notes.thisNote).getNoteDescription(), view);
-            addNewTextView(notesArrayList.get(Notes.thisNote).getNoteDate(), view);
+        Bundle args = getArguments();
+        if (args != null) {
+            Notes notes = getArguments().getParcelable(Notes.NOTE_KEY);
+
+            addNewTextView(notes.getNote(), view);
+            addNewTextView(notes.getNoteDescription(), view);
+            addNewTextView(notes.getNoteDate(), view);
         }
     }
 

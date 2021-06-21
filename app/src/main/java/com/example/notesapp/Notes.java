@@ -9,7 +9,6 @@ import java.util.Date;
 
 public class Notes implements Parcelable {
     public static final String NOTE_KEY = "NOTE_KEY";
-    public static int thisNote = -1;
 
     private String note;
     private String noteDescription;
