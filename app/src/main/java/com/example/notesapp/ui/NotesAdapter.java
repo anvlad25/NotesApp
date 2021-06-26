@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.notesapp.Notes;
+import com.example.notesapp.data.Notes;
 import com.example.notesapp.R;
 
 import java.util.ArrayList;

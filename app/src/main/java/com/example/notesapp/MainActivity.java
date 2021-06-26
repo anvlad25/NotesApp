@@ -12,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import com.example.notesapp.data.Notes;
 import com.example.notesapp.ui.NotesFragment;
 import com.google.android.material.navigation.NavigationView;
 
