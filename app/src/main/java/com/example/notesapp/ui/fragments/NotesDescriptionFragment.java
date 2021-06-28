@@ -1,4 +1,4 @@
-package com.example.notesapp.ui;
+package com.example.notesapp.ui.fragments;
 
 import android.os.Bundle;
 import android.widget.LinearLayout;

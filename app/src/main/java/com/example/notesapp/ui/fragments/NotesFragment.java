@@ -1,16 +1,18 @@
-package com.example.notesapp.ui;
+package com.example.notesapp.ui.fragments;
 
 import android.os.Bundle;
+import android.view.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.notesapp.data.Notes;
 import com.example.notesapp.R;
+import com.example.notesapp.ui.GridItemDecoration;
+import com.example.notesapp.ui.NotesAdapter;
 
 import java.util.ArrayList;
 
@@ -19,6 +21,7 @@ public class NotesFragment extends Fragment {
     private static final int NUMBEROFCOLUMNS = 3;
     private static final int SPACING = 20;
     private static ArrayList<Notes> notesArrayList = new ArrayList<>();
+    private NotesAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,19 +43,18 @@ public class NotesFragment extends Fragment {
         gridLayoutManager.getPaddingLeft();
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        NotesAdapter adapter = new NotesAdapter(data);
+        adapter = new NotesAdapter(data, this);
         recyclerView.addItemDecoration(new GridItemDecoration(numberOfColumns, SPACING));
-        adapter.setOnItemClickListener((view1, position) -> setNoteDisc(notesArrayList.get(position)));
+        adapter.setOnItemClickListener((view1, position) -> setNoteDisc(new NotesDescriptionFragment(), notesArrayList.get(position)));
 
         recyclerView.setAdapter(adapter);
     }
 
-    private void setNoteDisc(Notes notes) {
+    private void setNoteDisc(Fragment fragment, Notes notes) {
         FragmentManager fragmentManager = getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         Bundle bundle = new Bundle();
-        NotesDescriptionFragment fragment = new NotesDescriptionFragment();
         bundle.putParcelable(Notes.NOTE_KEY, notes);
         fragment.setArguments(bundle);
 
@@ -61,4 +63,27 @@ public class NotesFragment extends Fragment {
 
         fragmentTransaction.commit();
     }
+
+    @Override
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = requireActivity().getMenuInflater();
+        inflater.inflate(R.menu.card_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int position = adapter.getElemPosition();
+        switch (item.getItemId()) {
+            case R.id.action_update:
+                setNoteDisc(new UpdateNote(), notesArrayList.get(position));
+                return true;
+            case R.id.action_delete:
+                notesArrayList.remove(position);
+                adapter.notifyItemRemoved(position);
+                return true;
+        }
+        return super.onContextItemSelected(item);
+    }
+
 }

@@ -7,4 +7,10 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="left_menu">Боковое меню</string>
+    <string name="delete">Удалить</string>
+    <string name="update">Изменить</string>
+    <string name="textHeading">Заголовок</string>
+    <string name="textNote">Заметка</string>
+    <string name="textData">Дата</string>
+    <string name="addNote">Добавить</string>
 </resources>
