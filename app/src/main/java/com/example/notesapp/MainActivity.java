@@ -1,27 +1,25 @@
 package com.example.notesapp;
 
-import android.content.res.Configuration;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import com.example.notesapp.data.Notes;
+import com.example.notesapp.ui.NotesFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-    protected static boolean isLandscape;
     protected static ArrayList<Notes> notesArrayList = new ArrayList<>();
 
     @Override
@@ -29,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
         notesArrayList = initArrayNotes();
 
         initFrame();
@@ -41,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Notes> arrayList = new ArrayList<>();
         arrayList.add(new Notes("Заметка 1", "Важный текст из заметки 1", new Date().getTime()));
         arrayList.add(new Notes("Заметка 2", "Очень важный текст из заметки 2", new Date().getTime()));
+        arrayList.add(new Notes("Заметка 3", "Текст из заметки 3", new Date().getTime()));
+        arrayList.add(new Notes("Заметка 4", "Текст из заметки 4", new Date().getTime()));
+        arrayList.add(new Notes("Заметка 5", "Текст из заметки 5", new Date().getTime()));
 
         return arrayList;
     }
@@ -50,13 +50,7 @@ public class MainActivity extends AppCompatActivity {
         NotesFragment fragment = new NotesFragment();
         bundle.putParcelableArrayList(Notes.NOTE_KEY, notesArrayList);
         fragment.setArguments(bundle);
-
-        if (!isLandscape) {
-            includeFragment(fragment, R.id.frame_container);
-        } else {
-            includeFragment(fragment, R.id.frame_container);
-            includeFragment(new NotesDescriptionFragment(), R.id.frame_container_land);
-        }
+        includeFragment(fragment, R.id.frame_container);
     }
 
     private void includeFragment(Fragment fragment, int frameId) {

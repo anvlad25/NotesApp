@@ -1,4 +1,4 @@
-package com.example.notesapp;
+package com.example.notesapp.ui;
 
 import android.os.Bundle;
 import android.widget.LinearLayout;
@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.example.notesapp.data.Notes;
+import com.example.notesapp.R;
 
 import java.util.ArrayList;
 
