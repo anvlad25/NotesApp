@@ -1,11 +1,11 @@
 package com.example.notesapp;
 
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -13,7 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.example.notesapp.data.Notes;
-import com.example.notesapp.ui.NotesFragment;
+import com.example.notesapp.ui.fragments.AddNewNote;
+import com.example.notesapp.ui.fragments.NotesFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         notesArrayList = initArrayNotes();
 
-        initFrame();
+        initFrame(new NotesFragment(), false);
         initToolbar();
         initDrawer(initToolbar());
     }
@@ -45,20 +46,23 @@ public class MainActivity extends AppCompatActivity {
         return arrayList;
     }
 
-    private void initFrame() {
+    private void initFrame(Fragment fragment, boolean isAddToBackStack) {
         Bundle bundle = new Bundle();
-        NotesFragment fragment = new NotesFragment();
         bundle.putParcelableArrayList(Notes.NOTE_KEY, notesArrayList);
         fragment.setArguments(bundle);
-        includeFragment(fragment, R.id.frame_container);
+        includeFragment(fragment, R.id.frame_container, isAddToBackStack);
     }
 
-    private void includeFragment(Fragment fragment, int frameId) {
+    private void includeFragment(Fragment fragment, int frameId, boolean isAddToBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragmentTransaction.add(frameId, fragment);
-
+        if (!isAddToBackStack) {
+            fragmentTransaction.add(frameId, fragment);
+        } else {
+            fragmentTransaction.replace(frameId, fragment);
+            fragmentTransaction.addToBackStack(null);
+        }
         fragmentTransaction.commit();
     }
 
@@ -72,9 +76,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            Toast.makeText(MainActivity.this, R.string.menu_settings, Toast.LENGTH_SHORT).show();
+        switch (id) {
+            case R.id.action_settings:
+                Toast.makeText(MainActivity.this, R.string.menu_settings, Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.add_note:
+                initFrame(new AddNewNote(), true);
+                return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
