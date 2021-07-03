@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -12,55 +13,43 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.example.notesapp.data.NoteMapping;
 import com.example.notesapp.data.Notes;
 import com.example.notesapp.ui.fragments.AddNewNote;
 import com.example.notesapp.ui.fragments.NotesFragment;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    protected static ArrayList<Notes> notesArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        notesArrayList = initArrayNotes();
-
         initFrame(new NotesFragment(), false);
         initToolbar();
         initDrawer(initToolbar());
     }
 
-    private ArrayList<Notes> initArrayNotes() {
-        ArrayList<Notes> arrayList = new ArrayList<>();
-        arrayList.add(new Notes("Заметка 1", "Важный текст из заметки 1", new Date().getTime()));
-        arrayList.add(new Notes("Заметка 2", "Очень важный текст из заметки 2", new Date().getTime()));
-        arrayList.add(new Notes("Заметка 3", "Текст из заметки 3", new Date().getTime()));
-        arrayList.add(new Notes("Заметка 4", "Текст из заметки 4", new Date().getTime()));
-        arrayList.add(new Notes("Заметка 5", "Текст из заметки 5", new Date().getTime()));
-
-        return arrayList;
-    }
-
     private void initFrame(Fragment fragment, boolean isAddToBackStack) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(Notes.NOTE_KEY, notesArrayList);
-        fragment.setArguments(bundle);
-        includeFragment(fragment, R.id.frame_container, isAddToBackStack);
-    }
-
-    private void includeFragment(Fragment fragment, int frameId, boolean isAddToBackStack) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         if (!isAddToBackStack) {
-            fragmentTransaction.add(frameId, fragment);
+            fragmentTransaction.add(R.id.frame_container, fragment);
         } else {
-            fragmentTransaction.replace(frameId, fragment);
+            fragmentTransaction.replace(R.id.frame_container, fragment);
             fragmentTransaction.addToBackStack(null);
         }
         fragmentTransaction.commit();

@@ -2,6 +2,7 @@ package com.example.notesapp.ui.fragments;
 
 import android.os.Bundle;
 import android.view.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -9,12 +10,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.notesapp.data.NoteMapping;
 import com.example.notesapp.data.Notes;
 import com.example.notesapp.R;
 import com.example.notesapp.ui.GridItemDecoration;
 import com.example.notesapp.ui.NotesAdapter;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 
 public class NotesFragment extends Fragment {
@@ -23,16 +30,36 @@ public class NotesFragment extends Fragment {
     private static ArrayList<Notes> notesArrayList = new ArrayList<>();
     private NotesAdapter adapter;
 
+    private final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private final CollectionReference collection = firebaseFirestore.collection(NoteMapping.COLLECTION_PATH);
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewNotes);
-        Bundle args = getArguments();
-        if (args != null) {
-            notesArrayList = getArguments().getParcelableArrayList(Notes.NOTE_KEY);
-            initRecyclerView(recyclerView, notesArrayList);
-        }
+
+        notesArrayList = initArrayNotes();
+        initRecyclerView(recyclerView, notesArrayList);
+
         return view;
+    }
+
+    private ArrayList<Notes> initArrayNotes() {
+        ArrayList<Notes> arrayList = new ArrayList<>();
+
+        collection.get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Map<String, Object> doc = document.getData();
+                            String id = document.getId();
+                            Notes notes = NoteMapping.toNotes(id, doc);
+                            arrayList.add(notes);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+        return arrayList;
     }
 
     private void initRecyclerView(RecyclerView recyclerView, ArrayList<Notes> data) {
@@ -79,6 +106,7 @@ public class NotesFragment extends Fragment {
                 setNoteDisc(new UpdateNote(), notesArrayList.get(position));
                 return true;
             case R.id.action_delete:
+                collection.document(notesArrayList.get(position).getId()).delete();
                 notesArrayList.remove(position);
                 adapter.notifyItemRemoved(position);
                 return true;

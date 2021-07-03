@@ -10,12 +10,10 @@ import java.util.Date;
 public class Notes implements Parcelable {
     public static final String NOTE_KEY = "NOTE_KEY";
 
+    private String id;
     private String note;
     private String noteDescription;
     private String noteDate;
-
-    public Notes() {
-    }
 
     public Notes(String note, String noteDescription, long noteDate) {
         this.note = note;
@@ -68,6 +66,14 @@ public class Notes implements Parcelable {
         Date date = new Date(noteDate);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         this.noteDate = dateFormat.format(date);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

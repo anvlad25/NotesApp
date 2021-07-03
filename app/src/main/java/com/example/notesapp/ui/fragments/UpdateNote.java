@@ -3,29 +3,33 @@ package com.example.notesapp.ui.fragments;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.EditText;
+
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.example.notesapp.R;
+import com.example.notesapp.data.NoteMapping;
 import com.example.notesapp.data.Notes;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class UpdateNote extends Fragment {
-    private static EditText editTextHeading;
-    private static EditText editTextNote;
-    private static EditText editTextDate;
+    private EditText editTextHeading;
+    private EditText editTextNote;
+    private EditText editTextDate;
     private static Notes notes;
 
-    public UpdateNote() {
-    }
+    private final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private final CollectionReference collection = firebaseFirestore.collection(NoteMapping.COLLECTION_PATH);
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public UpdateNote() {
     }
 
     @Override
@@ -53,11 +57,10 @@ public class UpdateNote extends Fragment {
     public void onDestroyView() {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy");
 
-        notes.setNote(editTextHeading.getText().toString());
-        notes.setNoteDescription(editTextNote.getText().toString());
         try {
             Date dateNote = f.parse(editTextDate.getText().toString());
-            notes.setNoteDate(dateNote.getTime());
+            Notes updateNote = new Notes(editTextHeading.getText().toString(), editTextNote.getText().toString(), dateNote.getTime());
+            collection.document(notes.getId()).set(NoteMapping.toDocument(updateNote));
         } catch (ParseException e) {
             e.printStackTrace();
         }
