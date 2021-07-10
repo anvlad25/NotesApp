@@ -13,4 +13,7 @@
     <string name="textNote">Заметка</string>
     <string name="textData">Дата</string>
     <string name="addNote">Добавить</string>
+    <string name="delete_or_no">Точно удалить?</string>
+    <string name="done">Да</string>
+    <string name="cancel">Нет</string>
 </resources>
